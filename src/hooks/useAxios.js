@@ -11,11 +11,29 @@ import axios from 'axios';
 
 const useAxios = (url) => {
 	const [responses, setResponse] = useState([]);
-	const addResponseData = async (options = '') => {
-		const response = await axios.get(url + options);
+	const addResponseData = async (options) => {
+		let completeUrl;
+		typeof options === 'string'
+			? (completeUrl = url + options)
+			: (completeUrl = url);
+
+		const response = await axios.get(completeUrl);
 		setResponse((cards) => [...cards, { ...response.data, id: uuid() }]);
 	};
+
 	return [responses, addResponseData];
 };
 
 export default useAxios;
+
+// const useAxios = (url) => {
+// 	const [responses, setResponse] = useState([]);
+// 	const addResponseData = async (options = '') => {
+// 		const response = await axios.get(url + options);
+// 		setResponse((cards) => [...cards, { ...response.data, id: uuid() }]);
+// 	};
+
+// 	return [responses, addResponseData];
+// };
+
+// export default useAxios;
