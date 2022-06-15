@@ -1,68 +1,52 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# React Pokemon Cards
 
-## Available Scripts
+### This exercise will give you practice writing your own custom hooks. We’ve provided you with an app, but the code could use some refactoring.
 
-In the project directory, you can run:
 
-### `npm start`
+[<img src="public/cards.png" width="700"/>](public/cards.png/)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+<hr>
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Step One: Read the Code
 
-### `npm test`
+The app uses two APIs, the Deck of Cards API and the Pokemon API, to generate different types of cards on the page.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Play around with the app to get a sense for how it works. Draw out the component hierarchy in your pair and make sure you understand how all of the pieces fit together.
 
-### `npm run build`
+<hr>
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Step Two: _**useFlip**_
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Both the _**PokemonCard**_ and the _**PlayingCard**_ components can be flipped over when clicked on. You may have noticed that there is some duplicate code in these components. Create a _**hooks.js**_ file in _**src/**_, and in that file write a custom hook called _**useFlip**_ which will hold the business logic for flipping any type of card.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+_**useFlip**_ doesn’t need to take an argument, and similar to useState, it should return an array with two elements. The first element is the current flip state of the card, and the second element is a function that will toggle the flip state.
 
-### `npm run eject`
+Once you’ve written this hook, refactor _**PokemonCard**_ and _**PlayingCard**_ to use this custom hook.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+<hr>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Step Three: _**useAxios**_ in _**PlayingCardList**_
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+In the _**PlayingCardList**_ component, we initialize an empty array in state, and add to it via an AJAX request we make with _**axios**_. Since we use _**axios**_ in a few components, let’s move this logic into a function called _**useAxios**_.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+_**useAxios**_ should take in a URL, and similar to useState, it should return an array with two elements. The first element is an array of data obtained from previous AJAX requests (since we will add to this array, it’s a piece of state). The second element is a function that will add a new object of data to our array.
 
-## Learn More
+Once you’ve written this hook, refactor _**PlayingCardList**_ to use this custom hook. (Don’t worry about _**Pokedex**_ for now - that’s coming in the next part!
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+<hr>
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Step Four: _**useAxios**_ in _**Pokedex**_
 
-### Code Splitting
+_**Pokedex**_ also make AJAX requests, but this one’s a bit trickier. _**PlayingCardList**_ makes a request to the same endpoint every time, but the endpoint in _**Pokedex**_ depends on the name of the pokemon.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+Figure out a way to modify your _**useAxios**_ hook so that when you call _**useAxios**_ you can just provide a base url, and when you want to add to your array of response data in state, you can provide the rest of the url.
 
-### Analyzing the Bundle Size
+Once you’ve done this, refactor _**Pokedex**_ to use _**useAxios**_. Make sure _**PlayingCardList**_ still works too!
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+<hr>
 
-### Making a Progressive Web App
+## Further Study: Removing response data
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+Add two buttons to the page: one that will erase all of the playing cards in state, and one that will erase all of the pokemon cards.
 
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Since these arrays are controlled from within the _**useAxios**_ hook, one way to approach this would be to have _**useAxios**_ have a third element in its return array: a function that will remove everything from the array in stat
